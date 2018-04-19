@@ -26,6 +26,11 @@ public class ContactsApp {
 
 	// The Data Access Object (DAO) for Contacts objects
 	private static Dao<Contact,Long> contactDao;
+
+    // This code is to limit the severity of log messages printed on console.
+	static {
+		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "error");
+    }
 	
 	public static void main(String[] args) throws SQLException, IOException {
 		// Create ORMLite connection to the database. You only need one
@@ -34,7 +39,7 @@ public class ContactsApp {
 		// Create database tables. Only the first time, or if you change the schema.
 		if (CREATE_TABLES) createTables(connSource);
 		
-		// Create a data access object (DAO) for Contacts objects table
+		// Create a data access object (DAO) for Contact objects
 		contactDao = DaoManager.createDao(connSource, Contact.class);
 		
 		// Add some contacts -- be careful not to add same person twice

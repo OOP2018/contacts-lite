@@ -1,11 +1,17 @@
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+/**
+ * A class for objects to save in a database table.
+ * Each object of this class should have unique identity
+ * field that is used as the "primary key" in the database.
+ * In this example we let the database generate and assign
+ * the id itself.  When an object is saved to the database
+ * itd id will be updated.
+ */
 @DatabaseTable(tableName="contacts")
 public class Contact {
-	// This is for HSQL which uses a sequence named "TABLENAME_ID_SEQ", ie. "CONTACTS_ID_SEQ"
-	// For other databases, try "(generatedId=true)" instead. See ORMLite Section 2.8.2.
-	//@DatabaseField(generatedIdSequence="CONTACTS_ID_SEQ")
+    // The id field
 	@DatabaseField(generatedId=true)
 	private Long id;
 	@DatabaseField
