@@ -81,7 +81,7 @@ public class ContactsApp {
 				// where().eq(columnName, value)
 				// where().ge(columnName, value)  uses "columnName >= value"
 				// where().like(columnName, value) uses "columnName LIKE value"
-				// in SQL "%" is wildcard character (matches anything)
+				// in SQL "%" is a wildcard character (matches anything)
 				// name LIKE "Foo%"  matches any name that starts with "Foo".
 				qb.where().like("name", name+"%");
 				// Perform the query.  May throw SQLException.

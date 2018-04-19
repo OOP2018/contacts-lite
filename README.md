@@ -19,7 +19,15 @@ For Windows you can use **forward slash** (/) as path separator.
 
 3. Run the `ContactsApp` class as Java application.
 
-## What it Shows
+## Files you need
+
+Add these to your project **build path**.
+
+* lib/ormlite-core-5.1.jar
+* lib/ormlite-jdbc-5.1.jar
+* lib/h2-2.1.197.jar - JDBC driver and related files for H2 database
+
+## What the Application Shows
 
 `Contact.java` has ORMLite annotations for persisting objects to a database.  Such objects are called "entitites".
 
@@ -41,6 +49,8 @@ ORMLite gives you the flexibility to:
 * define your own DAO classes as subclasses of `BaseDaoImpl` in case you want to add new functionality.
 * use a PooledConnectionSource for many connections if you need them.
 
+### DAO for CRUD Operations
+
 The Dao objects (like `contactDao`) provide basic CRUD operations
 
 | contactDao Method | What is does                 |
@@ -54,13 +64,15 @@ The Dao objects (like `contactDao`) provide basic CRUD operations
 Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  And the search criteria depend on the type of entity.
 
 
-## Files you need
+## How To Limit Log Messages?
 
-Add these to your project **build path**.
+ORMLite has a built-in Logging facility named LocalLog.  To set the minimum several of log messages see:
+[http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html](http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html)
 
-* lib/ormlite-core-5.1.jar
-* lib/ormlite-jdbc-5.1.jar
-* lib/h2-2.1.197.jar - JDBC driver and related files for H2 database
+## Code Improvement
+
+You should not hard-code configuration information in your Java code.
+Use a properties file and the `util.PropertyManager` class to get configuration values from a properties file.
 
 ## Reference
 
