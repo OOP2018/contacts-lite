@@ -20,7 +20,7 @@ For Windows you can use **forward slash** (/) as path separator.
 
 ## What it Shows
 
-The `Contact.java` has ORMLite annotations for persisting objects using a datbase.  These objects are "entitites".
+`Contact.java` has ORMLite annotations for persisting objects to a database.  Such objects are called "entitites".
 
 In `Contact` the ORMLite annotations are used, but you can use standard JPA annotations instead (see ORMLite User's Guide, Chapter 2).
 
@@ -33,6 +33,8 @@ Dao<Contact,Long> contactDao =
 ```
 You create a connection to the database,
 then use it to instantiate a DAO for your entity class using `DaoManager`.
+The two type parameters `Dao<Type,Key>` are the entity class name and the type of the table primary key (id field).  In `Contact` we used a `Long` as the id field.
+
 ORMLite gives you the flexibility to:
 
 * define your own DAO classes as subclasses of `BaseDaoImpl` in case you want to add new functionality.
