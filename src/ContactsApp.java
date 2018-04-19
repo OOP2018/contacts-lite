@@ -6,6 +6,7 @@ import java.util.Scanner;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.logger.LocalLog;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -27,7 +28,7 @@ public class ContactsApp {
 	// The Data Access Object (DAO) for Contacts objects
 	private static Dao<Contact,Long> contactDao;
 
-    // This code is to limit the severity of log messages printed on console.
+    // This code is to limit which log messages are printed on console.
 	static {
 		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "error");
     }
