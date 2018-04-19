@@ -29,20 +29,32 @@ Add these to your project **build path**.
 
 ## What the Application Shows
 
-`Contact.java` has ORMLite annotations for persisting objects to a database.  Such objects are called "entitites".
+`Contact.java` has ORMLite annotations for persisting objects to a database.  The annotations tell ORMLite what *table* to use, which field is the *primary key* (identity), and other other fields to save in database table.  If you prefer, you can use standard JPA annotations instead of ORMLite's own annotations (see ORMLite User's Guide, Chapter 2).
 
-In `Contact` the ORMLite annotations are used, but you can use standard JPA annotations instead (see ORMLite User's Guide, Chapter 2).
+```java
+@DatabaseTable(tableName="contacts")
+public class Contact {
+    // this field is the primary key or "identity" for saved objects
+    @DatabaseField(generatedId=true)
+    private Long id;
+    @DatabaseField
+    private String name;
+    @DatabaseField
+    private String email;
+    ...
+}
+```
 
 ORMLite creates a *Data Access Object* for your entity classes.
-In the main class, we wrote:
+The DAO has methods to save, update, find, or data object data in the database.
+
+To create a DAO, in `ContactsApp` we write:
 ```java
-ConnectionSource connSource = new JdbcConnectionSource(DATABASE_URL);
+ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL);
 Dao<Contact,Long> contactDao = 
-         DaoManager.createDao(connectionSource, Contact.class);
+                  DaoManager.createDao(connectionSource, Contact.class);
 ```
-You create a connection to the database,
-then use it to instantiate a DAO for your entity class using `DaoManager`.
-The two type parameters `Dao<Type,Key>` are the entity class name and the type of the table primary key (id field).  In `Contact` we used a `Long` as the id field.
+The two type parameters in `Dao<Type,Key>` are the entity class name and the type of the table primary key (id field).  In `Contact` we used a `Long` as the id field.
 
 ORMLite gives you the flexibility to:
 
@@ -55,13 +67,30 @@ The Dao objects (like `contactDao`) provide basic CRUD operations
 
 | contactDao Method | What is does                 |
 |:------------------|:-----------------------------|
-| create(contact) | save a contact to the database |
-| update(contact) | update record for existing contact with values from object |
-| find or query   | query and retrieve objects |
-| iterator()      | get all contacts from the database, as an Iterator |
-| delete(contact) | delete a contact from the database |
+| create(contact)   | save a contact to the database |
+| update(contact)   | update record for existing contact with values from object |
+| find or query     | query and retrieve objects |
+| iterator()        | get all contacts from the database, as an Iterator |
+| delete(contact)   | delete a contact from the database |
+
+For example, to save an object's data as a row in the "contacts" table:
+```java
+Contact fatalai = new Contact("Fatalaijon","091-5551212","fatalai@gmail.com");
+contactDao.create( fatalai );
+// show the id assigned to this object by database
+System.out.println("Fatalai saved. His id is "+fatalai.getId() );
+```
 
 Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  And the search criteria depend on the type of entity.
+To find objects by name using a QueryBuilder:
+
+```java
+QueryBuilder<Contact,Long> qb = contactDao.queryBuilder();
+// search contacts WHERE name equals "Jim"
+qb.where().eq("name", "Jim');
+// perform the query. It may return 0 or more results
+List<Contact> result = qb.query();
+```
 
 
 ## How To Limit Log Messages?
@@ -73,6 +102,11 @@ ORMLite has a built-in Logging facility named LocalLog.  To set the minimum seve
 
 You should not hard-code configuration information in your Java code.
 Use a properties file and the `util.PropertyManager` class to get configuration values from a properties file.
+
+For example:
+```java
+String DATABASE_URL = PropertyManager.getProperty("database.url");
+```
 
 ## Reference
 
