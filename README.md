@@ -13,7 +13,9 @@ private static final String DATABASE_URL = "jdbc:h2:/home/jim/temp/h2/contacts";
 private static final boolean CREATE_TABLES = true;
 ```
 For Windows you can use **forward slash** (/) as path separator.
+
 2. Optionally, edit code in `addContacts()` to add your own contacts.
+
 3. Run the `ContactsApp` class as Java application.
 
 ## What it Shows
