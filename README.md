@@ -4,9 +4,10 @@
 
 The main class is `ContactsApp.java`. 
 
-1. Before you run it, set two variables in the file:
+1. Before you run it, set the variables `DATABASE_URL` and `CREATE_TABLES`:
 ```java
-// Name of a *directory* on your machine where database files will be saved.
+// The Name of a directory + base name of database files created in that directory.
+// In this example, ".../temp/h2/" is the directory, "contacts" is base name
 // The directory must already exist.
 private static final String DATABASE_URL = "jdbc:h2:/home/jim/temp/h2/contacts";
 // Try to create database tables at startup? (Does nothing if tables exist.)

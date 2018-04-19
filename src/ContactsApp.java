@@ -17,10 +17,10 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class ContactsApp {
 	public static final Scanner console = new Scanner(System.in);
-	// Name of a *directory* on your machine where database files will be saved.
-	// The directory must already exist.
-	private static final String DATABASE_URL = 
-			"jdbc:h2:/home/jim/temp/h2/contacts";
+	// The name of a directory + base name of database files.
+	// The directory must already exist, but the files are created
+    // For example: h2/contacts.mv.db h2/contacts.trace.db
+	private static final String DATABASE_URL = "jdbc:h2:/home/jim/temp/h2/contacts";
 	// Try to create database tables at startup? (Does nothing if tables exist.)
 	private static final boolean CREATE_TABLES = true;
 
