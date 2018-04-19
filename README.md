@@ -54,7 +54,7 @@ ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL);
 Dao<Contact,Long> contactDao = 
                   DaoManager.createDao(connectionSource, Contact.class);
 ```
-The two type parameters in `Dao<Type,Key>` are the entity class name and the type of the table primary key (id field).  In `Contact` we used a `Long` as the id field.
+The two type parameters in `Dao<Type,Key>` are the entity class name and the type of the primary key field (id).  In `Contact` we used a `Long` as the id field.
 
 ORMLite gives you the flexibility to:
 
@@ -63,7 +63,7 @@ ORMLite gives you the flexibility to:
 
 ### DAO for CRUD Operations
 
-The Dao objects (like `contactDao`) provide basic CRUD operations
+The Dao objects (like `contactDao`) provide basic database operations
 
 | contactDao Method | What is does                 |
 |:------------------|:-----------------------------|
@@ -95,7 +95,7 @@ List<Contact> result = qb.query();
 
 ## How To Limit Log Messages?
 
-ORMLite has a built-in Logging facility named LocalLog.  To set the minimum several of log messages see:
+ORMLite has a built-in Logging facility named LocalLog.  To set the minimum level of log messages see:
 [http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html](http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html)
 
 ## Code Improvement
