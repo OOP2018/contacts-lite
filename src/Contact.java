@@ -26,6 +26,7 @@ public class Contact {
 	 */
 	public Contact(String name, String telephone, String email) {
 		super();
+		this.id = null;
 		this.name = name;
 		this.telephone = telephone;
 		this.email = email;

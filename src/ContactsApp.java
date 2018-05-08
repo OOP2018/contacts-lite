@@ -1,14 +1,20 @@
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.logger.LocalLog;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
+import util.PropertyManager;
 
 /**
  * Example of using ORMlite for persisting data about
@@ -18,14 +24,21 @@ import com.j256.ormlite.table.TableUtils;
 public class ContactsApp {
 	public static final Scanner console = new Scanner(System.in);
 	// The name of a directory + base name of database files.
-	// The directory must already exist, but the files are created
-    // For example: h2/contacts.mv.db h2/contacts.trace.db
-	private static final String DATABASE_URL = "jdbc:h2:/home/jim/temp/h2/contacts";
+	// The directory must already exist, but the files can be created
+	//private static final String DATABASE_URL = "jdbc:h2:/home/jim/temp/h2/contacts";
+	static final String DATABASE_URL = PropertyManager.getProperty("jdbc.url");
+			
+	
 	// Try to create database tables at startup? (Does nothing if tables exist.)
-	private static final boolean CREATE_TABLES = true;
+	private static final boolean CREATE_TABLES = 
+			Boolean.valueOf( PropertyManager.getProperty("createtables") );
 
 	// The Data Access Object (DAO) for Contacts objects
 	private static Dao<Contact,Long> contactDao;
+	
+	static {
+		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "error");
+	}
 	
 	public static void main(String[] args) throws SQLException, IOException {
 		// Create ORMLite connection to the database. You only need one
@@ -38,10 +51,12 @@ public class ContactsApp {
 		contactDao = DaoManager.createDao(connSource, Contact.class);
 		
 		// Add some contacts -- be careful not to add same person twice
-		addContacts();
+		//addContacts();
 		
 		// Query and display contacts.
 		queryContacts();
+		
+		//printAllContacts();
 		
 		connSource.close();
 		
@@ -53,14 +68,32 @@ public class ContactsApp {
 	 * Call this method one time.
 	 */
 	public static void addContacts() {
+		Scanner reader = null;
 		try {
-			contactDao.create( new Contact("Jim", "0912345678", "jebrucker@gmail.com") );
-			contactDao.create( new Contact("Taweerat","0862220000", "taweesoft@gmail.com") );
-			contactDao.create( new Contact("Fatalaijon", "0955551212", "fatalaijon@gmail.com"));
-		} catch (SQLException ex) {
+			ClassLoader loader = ContactsApp.class.getClassLoader();
+			InputStream in = loader.getResourceAsStream("data/students.csv");
+			reader = new Scanner(in);
+			while(reader.hasNextLine()) {
+				String line = reader.nextLine().trim();
+				if (line.startsWith("#")) continue;
+				String[] fields = line.split("\\s*,\\s*");
+				Contact c = new Contact(fields[0],fields[1], fields[2]);
+				contactDao.create( c );
+			}
+		} 
+		catch( SQLException ex ) {
 			System.out.println("addContacts threw SQLException: "+ex.getMessage());
 		}
+//		catch (IOException ioe ) {
+//			System.out.println("Cannot read data file");
+//		}
+		finally {
+			reader.close();
+		}
 		
+//			contactDao.create( new Contact("Jim", "0912345678", "jebrucker@gmail.com") );
+//			contactDao.create( new Contact("Taweerat","0862220000", "taweesoft@gmail.com") );
+//			contactDao.create( new Contact("Fatalaijon", "0955551212", "fatalaijon@gmail.com"));
 	}
 	
 	/**
@@ -75,6 +108,7 @@ public class ContactsApp {
 			if (name.isEmpty()) return;
 			// build a query.  You can append many clauses onto this to "build" a query.
 			QueryBuilder<Contact,Long> qb = contactDao.queryBuilder();
+			
 			
 			try {
 				// "where" has MANY methods, for example:
@@ -105,7 +139,12 @@ public class ContactsApp {
 		// you can use it in a for-each loop or call the forEach() method.
 	
 		System.out.printf("Number of contacts: %d\n", contactDao.countOf());
-		contactDao.forEach( c -> System.out.println(c.getName()+" "+c.getEmail()));	
+		Iterator<Contact> it = contactDao.iterator();
+		while( it.hasNext() ) {
+			Contact c = it.next();
+			System.out.printf("%s <%s>\n", c.getName(), c.getEmail());
+		}
+		//contactDao.forEach( c -> System.out.println(c.getName()+" "+c.getEmail()) );	
 	}
 
 
