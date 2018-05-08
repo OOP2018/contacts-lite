@@ -1,15 +1,15 @@
 ## Sample Project for ORMLite
 
 This project is an example of how to save objects to a
-database using Object Relational Mapping (ORM), using
-the ORMLite framework.
+database using Object Relational Mapping (ORM) and the
+the [ORMLite][ORMLite] framework.
 
 ORM performs these operations:
 
-* persisting (saving) objects to a database table by saving each attribute in a table field
-* creating objects from data in a database table, by inserting the field values into the object's attributes
-* search for objects in a database, using field values
-* delete stored objects from a database
+* **persist** (save) objects to a database table by saving each attribute in a table field
+* **retrieve** (recreate) objects from data in a database table, by inserting the field values into the object's attributes
+* **query** database and **search** for objects using some search criteria
+* **delete** stored objects from a database
 * manage object identities, so that each object has a unique identity and you don't create two copies of the same object
 
 ORM relieves the programmer of a lot of boring, repetitive programming required to directly save/retrieve object data in a database.
@@ -53,10 +53,12 @@ Add these to your project **build path**.
 
 ## What the Application Shows
 
-`Contact.java` is the type of objects we want to persist. It has ORMLite annotations for persisting objects to a database.  Such objects are called "entitites".
+`Contact.java` is the class of objects we want to persist. Such objects are called "entitites". It has ORMLite annotations to define what should be saved, and where.
+
 ```java
 @DatabaseTable(tableName="contacts")
 public class Contact {
+    // The "id" will be the databse table primary key value
     @DatabaseField(generatedId=true)
     private Long id;
     @DatabaseField
@@ -162,10 +164,11 @@ jdbc.user =
 jdbc.password =
 ```
 
-## Reference
+## References
 
 * [ORMLite.com][ORMLite] home for ORMLite software and documentation.
 * [H2 Database][H2] the H2 embedded database.
+* [Intro to Database](https://skeoop.github.io/database/) slides introducing database and ORM concepts.
 
 ---
 
