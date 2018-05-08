@@ -151,6 +151,7 @@ You should not hard-code configuration information in your Java code.
 Use a properties file and the `util.PropertyManager` class to get configuration values from a properties file.  For this app, the properties file is `contacts.config` in the src directory (it will be copied to the `bin` directory during project build).
 
 The property names can be anything you like; this example uses the standard names from JDBC:
+
 ```
 # A properties file for configuration values
 jdbc.url = jdbc:h2:/home/jim/h2/contacts
