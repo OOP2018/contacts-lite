@@ -27,14 +27,14 @@ This example uses [ORMLite][ORMLite].
 
 The main class is `ContactsApp.java`. 
 
-1. Before you run it, set the variables `DATABASE_URL` and `CREATE_TABLES` in the Properties file `src/contacts.config`.  The DATABASE_URL should be a file inside a directory where you want H2 to save the database files.  In this example `/home/jim/h2` is the directory, and `contacts` is the basename for database files:
+1. Before you run it, set the variables `jdbc.url` and `createtables` in the Properties file `src/contacts.config`.  The database URL should be a file inside a directory where you want H2 to save the database files.  In this example `/home/jim/h2` is the directory, and `contacts` is the basename for database files:
 
 ```shell
 # Name of a directory and base name of database files created in that directory.
 # In this example, "/home/jim/h2/" is the directory, "contacts" is base filename
-DATABASE_URL =  jdbc:h2:/home/jim/h2/contacts
+jdbc.url =  jdbc:h2:/home/jim/h2/contacts
 // Create database tables at startup? Does nothing if tables already exist. 
-CREATE_TABLES = true
+createtables = true
 ```
 For Windows you should use **forward slash** (/) as path separator.
 
@@ -172,7 +172,7 @@ createtables = false
 ```
 
 The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file. 
-To make the application portable, it searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
+To make the application portable, PropertyManager searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
 
 The property names can be anything you like; this example uses the standard names from JDBC:
 
@@ -185,6 +185,17 @@ jdbc.driver = org.h2.Driver
 # This isn't needed for H2, but included as example.
 jdbc.user =
 jdbc.password =
+```
+
+In Java code we can get properties like this:
+```java
+final String DATABASE_URL = PropertyManager.getProperty("jdbc.url");
+```
+
+PropertyManager also has a `getProperties()` method that returns the entire Properties object.  You can use this for testing, to print all the values on the console.
+```java
+java.util.Properties properties = PropertyManager.getProperties();
+properties.list( System.out );
 ```
 
 ## References

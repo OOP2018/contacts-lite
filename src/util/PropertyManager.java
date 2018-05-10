@@ -67,11 +67,25 @@ public class PropertyManager {
 	 *  Get a property value using a String name.
 	 *  The name should be a property name in the application's properties file.
 	 *  @param property name (key) of the property to get
-	 *  @return current value of the property
+	 *  @return current value of the property or empty string if not set
 	 */
 	public static String getProperty( String property ) {
 		if ( properties == null )  loadProperties();
 		return properties.getProperty( property, "" /*default value*/ );
+	}
+	
+	
+	/** 
+	 *  Get a property value using a String name.
+	 *  Return a default value if the property name isn't set.
+	 *  The name should be a property name in the application's properties file.
+	 *  @param property name (key) of the property to get
+	 *  @param defaultValue is the default value
+	 *  @return current value of the property or the defaultValue
+	 */
+	public static String getProperty( String property, String defaultValue ) {
+		if ( properties == null )  loadProperties();
+		return properties.getProperty( property, defaultValue );
 	}
 	
 	/**
