@@ -110,10 +110,11 @@ The Dao objects (like `contactDao`) provide basic database  operations
 | contactDao Method | What is does                 |
 |:------------------|:-----------------------------|
 | create(contact) | save a contact object to the database |
-| update(contact) | update record for existing contact with values from object |
-| query           | query and retrieve objects |
+| update(contact) | update record for existing contact with values from contact object |
+| query           | query and retrieve objects. Use QueryBuilder. |
 | iterator()      | get all contacts from the database, as an Iterator |
 | delete(contact) | delete a contact from the database |
+| countOf()       | return the number of rows in the table for this Dao |
 
 The basic operations Create, Retrieve, Update, and Delete form the acronym CRUD, a common term in software design.
 
@@ -126,7 +127,7 @@ contactDao.create( contact );
 System.out.println("Bill saved with id "+contact.getId());
 ```
 
-Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  And the search criteria depend on the type of entity.  
+Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  The search criteria depend on the type of entity.  
 
 ORMLite provides a `QueryBuilder` class that can create just about any query.  This is better than using raw SQL, like "SELECT * from contacts WHERE name LIKE ...", which is error-prone and vulnerable to SQL Injection attacks.
 
@@ -155,8 +156,9 @@ Use a properties file and the `util.PropertyManager` class to get configuration 
 The property names can be anything you like; this example uses the standard names from JDBC:
 
 ```
-# A properties file for configuration values
+# The URL for your database
 jdbc.url = jdbc:h2:/home/jim/h2/contacts
+# The JDBC Driver file. This really isn't needed.
 jdbc.driver = org.h2.Driver
 # For a client-server database you need a user and password.
 # This isn't needed for H2, but included as example.
