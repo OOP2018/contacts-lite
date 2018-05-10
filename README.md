@@ -26,14 +26,14 @@ This example uses [ORMLite][ORMLite].
 ## How to Build and Run
 
 1. Clone this repository.
-2. Create a path for the dataase files, for example /temp/h2/.
-3. Edit `src/contacts.config` and specify the database path.  Include "contacts" at the end of the path, which is the basename of generated files.
+2. Create a directory for the database files, for example /temp/h2/.
+3. Edit `src/contacts.config` and specify the database path.  Include "contacts" at the end of the path, which is the basename for files created by h2.
 For Windows you should use **forward slash** (/) in paths, as shown here.
 ```shell
 # Name of a directory and base name of database files created in that directory.
 # In this example, "/temp/h2/" is the directory, "contacts" is base filename
 jdbc.url =  jdbc:h2:/temp/h2/contacts
-// Create database tables at startup? Does nothing if tables already exist. 
+# Create database tables at startup? Does nothing if tables already exist. 
 createtables = true
 ```
 4. Build the source code.  To build using an IDE, add the JAR files in the "lib" directory to the project buildpath.  To build from the command line do:
@@ -63,7 +63,7 @@ They must be on the Java classpath to compile and run the application.
 ```java
 @DatabaseTable(tableName="contacts")
 public class Contact {
-    // The "id" will be the databse table primary key value
+    // The "id" will be the primary key for the database table
     @DatabaseField(generatedId=true)
     private Long id;
     @DatabaseField
@@ -79,32 +79,31 @@ public class Contact {
     }
     /** The real constructor. */
     public Contact(String name, String telephone, String email) {
-        // the id is assigned by the database, 
-        // so don't set it here.
+        // the id is assigned by the database, so don't set it here.
         this.name = name;
         this.telephone = telephone;
         this.email = email;
      }
 
-     ... other methods, such as getName(), setName(), equals
+     ... other methods, such as getName(), setName(), equals()
 }
 ```
 
 In `Contact` the ORMLite annotations are used, but you can use standard JPA annotations instead (see ORMLite User's Guide, Chapter 2).
 
-ORMLite creates a *Data Access Object* for your entity classes.
-In the main class, we write:
+ORMLite creates a *Data Access Object* for persisting your entity classes.
+To create a DAO for "Contact" objects, we write: 
 ```java
-ConnectionSource connSource = new JdbcConnectionSource(DATABASE_URL);
+ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL);
 Dao<Contact,Long> contactDao = 
          DaoManager.createDao(connectionSource, Contact.class);
 ```
 
 You create a connection to the database,
 then use it to instantiate a DAO for your entity class using `DaoManager`.
-The two type parameters `Dao<Type,Key>` are the entity class name and the type of the table primary key (id field).  In `Contact` we used a `Long` as the id field.
+The two type parameters `Dao<Type,Key>` are the entity class name and the type of the id field (table primary key).  In `Contact` we used a `Long` as the id field.  If you use a primitive, such as "int" for the id field, write `int.class` for the Key type parameter.
 
-In a real application you probably want to write your own DAO so that you can add custom search methods.  With ORMLite your DAO should extend `BaseDaoImpl`.  BaseDaoImpl provides the basic `create()`, `delete()`, update()`, and query methods, so you only need to write your custom code. 
+In a real application you probably want to write your own DAO so that you can add custom search methods.  With ORMLite you can write a DAO that extends `BaseDaoImpl`, and add any methods you like.  BaseDaoImpl provides the basic `create()`, `delete()`, update()`, and query methods, so you only need to write your custom code. 
 
 You can also use a PooledConnectionSource for many connections if you need them.
 
@@ -116,7 +115,8 @@ The Dao objects (like `contactDao`) provide basic database operations
 |:------------------|:-----------------------------|
 | create(contact) | save a contact object to the database |
 | update(contact) | update record for existing contact with values from contact object |
-| query           | query and retrieve objects. Use QueryBuilder. |
+| queryForId(id)  | find object having the given id.  |
+| queryForEq(fieldName,value)  | find objects having a field with given value  |
 | iterator()      | get all contacts from the database, as an Iterator |
 | delete(contact) | delete a contact from the database |
 | countOf()       | return the number of rows in the table for this Dao |
@@ -130,11 +130,15 @@ Contact contact = new Contact("Bill Gates","14145550001","bill@microsoft.com");
 contactDao.create( contact );
 // the database assigns an id to the object:
 System.out.println("Bill saved with id "+contact.getId());
+
+// Find a contact named "Bill Gates"
+Contact result = contactDao.queryForEq("name","Bill Gates");
 ```
 
-Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  The search criteria depend on the type of entity.  
+Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  The DAO has many query methods which work for most simple queries.
 
-ORMLite provides a `QueryBuilder` class that can create just about any query.  This is better than using raw SQL, like "SELECT * from contacts WHERE ...", which is error-prone and vulnerable to SQL Injection attacks.
+For more general queries, ORMLite provides a `QueryBuilder` class.
+This is better than using raw SQL, like "SELECT * from contacts WHERE ...", which is error-prone and vulnerable to SQL Injection attacks.
 
 If we want to find all contacts that use Gmail we could write:
 ```java
