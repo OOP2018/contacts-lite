@@ -23,28 +23,34 @@ You need 4 things to use ORM:
 
 This example uses [ORMLite][ORMLite].
 
-## Usage
+## How to Build and Run
 
-The main class is `ContactsApp.java`. 
-
-1. Before you run it, set the variables `jdbc.url` and `createtables` in the Properties file `src/contacts.config`.  The database URL should be a file inside a directory where you want H2 to save the database files.  In this example `/home/jim/h2` is the directory, and `contacts` is the basename for database files:
-
+1. Clone this repository.
+2. Create a directory for the dataase files, for example /temp/h2/.
+3. Edit `src/contacts.config` and specify the database files.  Include "contacts" at the end of the path, which is the basename of generated files.
+For Windows you should use **forward slash** (/) in paths, as shown here.
 ```shell
 # Name of a directory and base name of database files created in that directory.
-# In this example, "/home/jim/h2/" is the directory, "contacts" is base filename
-jdbc.url =  jdbc:h2:/home/jim/h2/contacts
+# In this example, "/temp/h2/" is the directory, "contacts" is base filename
+jdbc.url =  jdbc:h2:/temp/h2/contacts
 // Create database tables at startup? Does nothing if tables already exist. 
 createtables = true
 ```
-For Windows you should use **forward slash** (/) as path separator.
+4. Build the source code.  To build using an IDE, add the JAR files in the "lib" directory to the project buildpath.  To build from the command line do:
+```shell
+# This example uses a Bash shell.  You can use the git-bash shell
+cmd>  cd contacts-lite
+cmd>  mkdir bin
+cmd>  cd src
+cmd>  javac -cp '../lib/*' -d ../bin *.java util/*.java
+```
+5. Run the main class `ContactsApp`. 
 
-2. Optionally, edit code in `addContacts()` to add your own contacts.
 
-3. Run the `ContactsApp` class as Java application.
+## Libraries Used 
 
-## Files you need
-
-Add these to your project **build path**.
+The JARs for ORMLite and the H2 database are in the project `lib` directory.
+They must be on the Java classpath to compile and run the application.
 
 * lib/ormlite-core-5.1.jar
 * lib/ormlite-jdbc-5.1.jar
@@ -52,7 +58,7 @@ Add these to your project **build path**.
 
 ## What the Application Shows
 
-`Contact.java` is the class of objects we want to persist. Such objects are called "entitites". It has ORMLite annotations to define what should be saved, and where.
+`Contact.java` is the class for objects we want to persist. Such objects are called "entitites". It has ORMLite annotations to define what should be saved, and where.
 
 ```java
 @DatabaseTable(tableName="contacts")
