@@ -222,6 +222,6 @@ properties.list( System.out );
 
 ---
 
-[ORMLite]: https://ormlite.com
+[ORMLite]: http://ormlite.com
 [H2]: http://www.h2database.com
 
