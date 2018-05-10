@@ -12,7 +12,7 @@ ORM performs these operations:
 * **delete** stored objects from a database
 * manage object identities, so that each object has a unique identity and you don't create two copies of the same object
 
-ORM relieves the programmer of a lot of boring, repetitive programming required to directly save/retrieve object data in a database.
+ORM eliminates a lot of boring, repetitive programming needed to directly save objects as fields in a database, or create objects from field data. ORM does this by itself.
 
 You need 4 things to use ORM:
 
@@ -21,23 +21,22 @@ You need 4 things to use ORM:
 3. Add annotations to your code to tell the framework which classes are saved in which tables.
 4. Create a "Data Access Object" (DAO) that performs the ORM operations.  The ORM framework makes this easy.
 
-This example uses [ORMLite][ORMLite]
+This example uses [ORMLite][ORMLite].
 
 ## Usage
 
 The main class is `ContactsApp.java`. 
 
-1. Before you run it, set the variables `DATABASE_URL` and `CREATE_TABLES`.  The DATABASE_URL should be a file inside an empty directory where you want H2 to save the database files.  In this example `/home/jim/h2` is the directory, and `contacts` is the basename for database files:
+1. Before you run it, set the variables `DATABASE_URL` and `CREATE_TABLES` in the Properties file `src/contacts.config`.  The DATABASE_URL should be a file inside a directory where you want H2 to save the database files.  In this example `/home/jim/h2` is the directory, and `contacts` is the basename for database files:
 
-```java
-// Name of a directory and base name of database files created in that directory.
-// In this example, "/home/jim/h2/" is the directory, "contacts" is base name
-// The directory must already exist.
-private static final String DATABASE_URL = "jdbc:h2:/home/jim/h2/contacts";
-// Try to create database tables at startup? (Does nothing if tables already exist.)
-private static final boolean CREATE_TABLES = true;
+```shell
+# Name of a directory and base name of database files created in that directory.
+# In this example, "/home/jim/h2/" is the directory, "contacts" is base filename
+DATABASE_URL =  jdbc:h2:/home/jim/h2/contacts
+// Create database tables at startup? Does nothing if tables already exist. 
+CREATE_TABLES = true
 ```
-For Windows you can use **forward slash** (/) as path separator.
+For Windows you should use **forward slash** (/) as path separator.
 
 2. Optionally, edit code in `addContacts()` to add your own contacts.
 
@@ -148,10 +147,32 @@ for(Contact c: results) System.out.println( c.getName() );
 ORMLite has a built-in Logging facility named LocalLog.  To set the minimum several of log messages see:
 [http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html](http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html)
 
-## Code Improvement: Use Properties for Configuration
+## Why Use a Properties File?
 
-You should not hard-code configuration information in your Java code.
-Use a properties file and the `util.PropertyManager` class to get configuration values from a properties file.  For this app, the properties file is `contacts.config` in the src directory (it will be copied to the `bin` directory during project build).
+ContactsApp needs the database URL to create a database connection. It also uses a boolean flag `CREATE_TABLES` to indicate whether it should try to create the database schema.   We could have put that in Java code like this:
+```java
+// Name of a directory and base name of database files created in that directory.
+// In this example, "/home/jim/h2/" is the directory, "contacts" is base name
+// The directory must already exist.
+private static final String DATABASE_URL = "jdbc:h2:/home/jim/h2/contacts";
+// Try to create database tables at startup? (Does nothing if tables already exist.)
+private static final boolean CREATE_TABLES = true;
+```
+
+but its bad practice to hard-code configuration information in Java code.
+
+Instead, we put this information in a properties file (`contacts.config`) in the format:
+```
+# The database URL.
+# For H2 it should contain a directory and the basename of the files that
+# H2 will use for your database.
+jdbc.url = hdbc:h2:/home/jim/h2/contacts
+# Whether or not to create database tables for entities. Does nothing if tables already exist.
+createtables = false
+```
+
+The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file. 
+To make the application portable, it searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
 
 The property names can be anything you like; this example uses the standard names from JDBC:
 
