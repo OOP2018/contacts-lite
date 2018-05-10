@@ -164,9 +164,7 @@ static {
 
 ContactsApp needs the database URL to create a database connection. It also uses a boolean flag `CREATE_TABLES` to indicate whether it should try to create the database schema.   We could have put that in Java code like this:
 ```java
-// Name of a directory and base name of database files created in that directory.
-// In this example, "/home/jim/h2/" is the directory, "contacts" is base name
-// The directory must already exist.
+// Name of a directory and base name for files created in that directory.
 private static final String DATABASE_URL = "jdbc:h2:/home/jim/h2/contacts";
 // Try to create database tables at startup? (Does nothing if tables already exist.)
 private static final boolean CREATE_TABLES = true;
@@ -179,9 +177,9 @@ Instead, we put this information in a properties file (`contacts.config`) in the
 # The database URL.
 # For H2 it should contain a directory and the basename of the files that
 # H2 will use for your database.
-jdbc.url = hdbc:h2:/home/jim/h2/contacts
-# Whether or not to create database tables for entities. Does nothing if tables already exist.
-createtables = false
+jdbc.url = jdbc:h2:/home/jim/h2/contacts
+# Try to create database tables? Does nothing if tables already exist.
+createtables = true
 ```
 
 The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file. 
