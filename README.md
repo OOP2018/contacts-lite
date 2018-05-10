@@ -26,8 +26,8 @@ This example uses [ORMLite][ORMLite].
 ## How to Build and Run
 
 1. Clone this repository.
-2. Create a directory for the dataase files, for example /temp/h2/.
-3. Edit `src/contacts.config` and specify the database files.  Include "contacts" at the end of the path, which is the basename of generated files.
+2. Create a path for the dataase files, for example /temp/h2/.
+3. Edit `src/contacts.config` and specify the database path.  Include "contacts" at the end of the path, which is the basename of generated files.
 For Windows you should use **forward slash** (/) in paths, as shown here.
 ```shell
 # Name of a directory and base name of database files created in that directory.
@@ -108,9 +108,9 @@ In a real application you probably want to write your own DAO so that you can ad
 
 You can also use a PooledConnectionSource for many connections if you need them.
 
-### What the DAO Does: CRUD Operations
+### What the DAO Does: Persistence Operations
 
-The Dao objects (like `contactDao`) provide basic database  operations
+The Dao objects (like `contactDao`) provide basic database operations
 
 | contactDao Method | What is does                 |
 |:------------------|:-----------------------------|
@@ -150,8 +150,15 @@ for(Contact c: results) System.out.println( c.getName() );
 
 ## How To Limit Log Messages?
 
-ORMLite has a built-in Logging facility named LocalLog.  To set the minimum several of log messages see:
+ORMLite has a built-in Logging facility named LocalLog.  It generates a lot of output messages.  To set the minimum several of log messages, see:
 [http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html](http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html)
+
+In the example code, there is a static block to specify that we only want to see messages of severity "error" or higher.
+```java
+static {
+    System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "error");
+}
+```
 
 ## Why Use a Properties File?
 
