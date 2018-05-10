@@ -134,16 +134,17 @@ System.out.println("Bill saved with id "+contact.getId());
 
 Finding or querying objects in the database is the most complex operation, since there many ways you might want to "search" for something.  The search criteria depend on the type of entity.  
 
-ORMLite provides a `QueryBuilder` class that can create just about any query.  This is better than using raw SQL, like "SELECT * from contacts WHERE name LIKE ...", which is error-prone and vulnerable to SQL Injection attacks.
+ORMLite provides a `QueryBuilder` class that can create just about any query.  This is better than using raw SQL, like "SELECT * from contacts WHERE ...", which is error-prone and vulnerable to SQL Injection attacks.
 
 If we want to find all contacts that use Gmail we could write:
 ```java
 QueryBuilder<Contact,Long> qb = contactDao.queryBuilder();
+// This is like SQL "WHERE email LIKE '%@gmail.com'
 qb = qb.where().like("email","%@gmail.com");
-// perform the query. Matches returned as a List.
+// perform the query. Results are returned as a List.
 List<Contact> results = qb.query();
 
-System.out.printf("found %d gmail users\n", results.size());
+System.out.printf("Found %d gmail users\n", results.size());
 for(Contact c: results) System.out.println( c.getName() );
 ```
 
