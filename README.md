@@ -180,8 +180,7 @@ private static final String DATABASE_URL = "jdbc:h2:/home/jim/h2/contacts";
 // Try to create database tables at startup? (Does nothing if tables already exist.)
 private static final boolean CREATE_TABLES = true;
 ```
-
-but it is **bad coding style** to hard-code configuration information in Java code.
+but it is **bad coding style** to hard-code configuration information in code.
 
 Instead, we put this information in a properties file (`contacts.config`) in the format:
 ```
@@ -193,12 +192,11 @@ jdbc.url = jdbc:h2:/temp/h2/contacts
 createtables = true
 ```
 
-The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file.
-PropertyManager searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
+The class `util.PropertyManager` reads this configuration file and creates a Java Properties object containing key-value pairs read from the file.
+PropertyManager searches for the configuration file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
 
 To get a property value in Java code, we write:
 
-In Java code we can get properties like this:
 ```java
 final String DATABASE_URL = PropertyManager.getProperty("jdbc.url");
 ```
@@ -218,7 +216,7 @@ jdbc.url = jdbc:h2:/home/jim/h2/contacts
 # The JDBC Driver file. This really isn't needed.
 jdbc.driver = org.h2.Driver
 # For a client-server database you need a user and password.
-# This isn't needed for H2, but included as example.
+# This isn't needed for H2 embedded database.
 jdbc.user =
 jdbc.password =
 ```
