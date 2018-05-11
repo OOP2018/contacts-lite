@@ -215,8 +215,7 @@ The standard standard names for JDBC properties are:
 jdbc.url = jdbc:h2:/home/jim/h2/contacts
 # The JDBC Driver file. This really isn't needed.
 jdbc.driver = org.h2.Driver
-# For a client-server database you need a user and password.
-# This isn't needed for H2 embedded database.
+# The database user name and password, needed for a client-server database.
 jdbc.user =
 jdbc.password =
 ```
