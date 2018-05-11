@@ -3,6 +3,8 @@
 This project is an example of how to save objects to a
 database using Object Relational Mapping (ORM) and the
 the [ORMLite][ORMLite] framework.
+It also shows how to use an embedded [H2][H2] database
+that can be easily created and initialized.
 
 ORM performs these operations:
 
@@ -12,28 +14,26 @@ ORM performs these operations:
 * **delete** stored objects from a database
 * manage object identities, so that each object has a unique identity and you don't create two copies of the same object
 
-ORM eliminates a lot of boring, repetitive programming needed to directly save objects as fields in a database, or create objects from field data. ORM does this by itself.
+ORM eliminates a lot of boring, repetitive programming needed to directly save objects as fields in a database, or create objects from a database. ORM does this for you.
 
 You need 4 things to use ORM:
 
 1. JAR files for the ORM framework
 2. A database driver.   For a client-server database like MySQL you also need a database server. For an embedded database like [H2][H2] or SqlLite, no server is needed.
-3. Add annotations to your code to tell the framework which classes are saved in which tables.
+3. Add annotations to your code to tell the framework which classes to save in the database, and the table names.
 4. Create a "Data Access Object" (DAO) that performs the ORM operations.  The ORM framework makes this easy.
-
-This example uses [ORMLite][ORMLite].
 
 ## How to Build and Run
 
 1. Clone this repository.
 2. Create a directory for the database files, for example /temp/h2/.
-3. Edit `src/contacts.config` and specify the database path.  Include "contacts" at the end of the path, which is the basename for files created by h2.
+3. Edit `src/contacts.config` and specify the database path.  Include "contacts" at the end of the path, which is the basename for files created by H2.
 For Windows you should use **forward slash** (/) in paths, as shown here.
 ```shell
 # Name of a directory and base name of database files created in that directory.
 # In this example, "/temp/h2/" is the directory, "contacts" is base filename
 jdbc.url =  jdbc:h2:/temp/h2/contacts
-# Create database tables at startup? Does nothing if tables already exist. 
+# Create database tables at startup? Does nothing if tables already exist.
 createtables = true
 ```
 4. Build the source code.  To build using an IDE, add the JAR files in the "lib" directory to the project buildpath.  To build from the command line do:
@@ -44,12 +44,12 @@ cmd>  mkdir bin
 cmd>  cd src
 cmd>  javac -cp '../lib/*' -d ../bin *.java util/*.java
 ```
-5. Run the main class `ContactsApp`. 
+5. Run the main class `ContactsApp`.
 
 
-## Libraries Used 
+## Libraries Used
 
-The JARs for ORMLite and the H2 database are in the project `lib` directory.
+The JARs for ORMLite and H2 database are in the project `lib` directory.
 They must be on the Java classpath to compile and run the application.
 
 * lib/ormlite-core-5.1.jar
@@ -58,12 +58,13 @@ They must be on the Java classpath to compile and run the application.
 
 ## What the Application Shows
 
-`Contact.java` is the class for objects we want to persist. Such objects are called "entitites". It has ORMLite annotations to define what should be saved, and where.
+`Contact.java` is the class for objects we want to persist (called "entitites"). This class has ORMLite annotations to tell ORMLite where to save the objects.
 
 ```java
 @DatabaseTable(tableName="contacts")
 public class Contact {
     // The "id" will be the primary key for the database table
+    // generatedId=true means the database will assign an id value itself
     @DatabaseField(generatedId=true)
     private Long id;
     @DatabaseField
@@ -89,21 +90,26 @@ public class Contact {
 }
 ```
 
-In `Contact` the ORMLite annotations are used, but you can use standard JPA annotations instead (see ORMLite User's Guide, Chapter 2).
+In `Contact` the ORMLite annotations are used, but you can use standard JPA annotations instead (see ORMLite User's Guide, Chapter 2). `@DatabaseField` indicates an attribute that should be saved in the database.  The annotation has many options. For example, to save the contact's name as a field of width 80 you can write:
+```java
+    @DatabaseField(width=80)
+    private String name;
+```
+Setting the width is useful if you want ORMLite to create the table schema for you.
 
 ORMLite creates a *Data Access Object* for persisting your entity classes.
-To create a DAO for "Contact" objects, we write: 
+To create a DAO for "Contact" objects, we write:
 ```java
 ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL);
-Dao<Contact,Long> contactDao = 
+Dao<Contact,Long> contactDao =
          DaoManager.createDao(connectionSource, Contact.class);
 ```
 
-You create a connection to the database,
-then use it to instantiate a DAO for your entity class using `DaoManager`.
+You first create a connection to the database,
+then use it to instantiate a DAO for your entity class(es) using `DaoManager`.
 The two type parameters `Dao<Type,Key>` are the entity class name and the type of the id field (table primary key).  In `Contact` we used a `Long` as the id field.  If you use a primitive, such as "int" for the id field, write `int.class` for the Key type parameter.
 
-In a real application you probably want to write your own DAO so that you can add custom search methods.  With ORMLite you can write a DAO that extends `BaseDaoImpl`, and add any methods you like.  BaseDaoImpl provides the basic `create()`, `delete()`, update()`, and query methods, so you only need to write your custom code. 
+In a real application you probably want to write your own DAO so that you can add custom search methods.  With ORMLite you can write a DAO that extends `BaseDaoImpl`, and add any methods you like.  BaseDaoImpl provides the basic `create()`, `delete()`, update()`, and query methods, so you only need to write your custom code.
 
 You can also use a PooledConnectionSource for many connections if you need them.
 
@@ -155,10 +161,10 @@ for(Contact c: results) System.out.println( c.getName() );
 
 ## How To Limit Log Messages?
 
-ORMLite has a built-in Logging facility named LocalLog.  It generates a lot of output messages.  To set the minimum several of log messages, see:
+ORMLite has a built-in Logging facility named LocalLog.  It generates a lot of output messages.  To set the minimum severity of log messages, see:
 [http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html](http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html)
 
-In the example code, there is a static block to specify that we only want to see messages of severity "error" or higher.
+In the example code there is a static block to specify that we only want to see messages of severity "error" or higher.
 ```java
 static {
     System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "error");
@@ -167,7 +173,7 @@ static {
 
 ## Why Use a Properties File?
 
-ContactsApp needs the database URL to create a database connection. It also uses a boolean flag `CREATE_TABLES` to indicate whether it should try to create the database schema.   We could have put that in Java code like this:
+ContactsApp needs the database URL to create a database connection. It also uses a boolean flag `CREATE_TABLES` to indicate whether it should try to create the database schema.   We could set these in Java code like this:
 ```java
 // Name of a directory and base name for files created in that directory.
 private static final String DATABASE_URL = "jdbc:h2:/home/jim/h2/contacts";
@@ -175,19 +181,19 @@ private static final String DATABASE_URL = "jdbc:h2:/home/jim/h2/contacts";
 private static final boolean CREATE_TABLES = true;
 ```
 
-but its bad practice to hard-code configuration information in Java code.
+but it is **bad coding style** to hard-code configuration information in Java code.
 
 Instead, we put this information in a properties file (`contacts.config`) in the format:
 ```
 # The database URL.
-# For H2 it should contain a directory and the basename of the files that
+# For H2 it should be a directory and the basename of the files that
 # H2 will use for your database.
-jdbc.url = jdbc:h2:/home/jim/h2/contacts
-# Try to create database tables? Does nothing if tables already exist.
+jdbc.url = jdbc:h2:/temp/h2/contacts
+# Create database tables if they don't exist?
 createtables = true
 ```
 
-The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file. 
+The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file.
 To make the application portable, PropertyManager searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
 
 The property names can be anything you like; this example uses the standard names from JDBC:
@@ -208,7 +214,7 @@ In Java code we can get properties like this:
 final String DATABASE_URL = PropertyManager.getProperty("jdbc.url");
 ```
 
-PropertyManager also has a `getProperties()` method that returns the entire Properties object.  You can use this for testing, to print all the values on the console.
+PropertyManager also has a `getProperties()` method that returns all the properties as a Properties object.  You can use this for testing, to print all the values on the console.
 ```java
 java.util.Properties properties = PropertyManager.getProperties();
 properties.list( System.out );
@@ -217,6 +223,7 @@ properties.list( System.out );
 ## References
 
 * [ORMLite.com][ORMLite] home for ORMLite software and documentation.
+* [ORMLite User Guide](http://ormlite.com/docs/ormlite.pdf).
 * [H2 Database][H2] the H2 embedded database.
 * [Intro to Database](https://skeoop.github.io/database/) slides introducing database and ORM concepts.
 
@@ -224,4 +231,3 @@ properties.list( System.out );
 
 [ORMLite]: http://ormlite.com
 [H2]: http://www.h2database.com
-
