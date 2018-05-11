@@ -194,20 +194,9 @@ createtables = true
 ```
 
 The class `util.PropertyManager` reads this configuration file and creates a Java Properties object, containing key-value pairs from the file.
-To make the application portable, PropertyManager searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
+PropertyManager searches for the properties file on the application classpath.  By putting `contacts.config` in the src directory, it will be copied to the `bin` directory during project build.
 
-The property names can be anything you like; this example uses the standard names from JDBC:
-
-```
-# The URL for your database
-jdbc.url = jdbc:h2:/home/jim/h2/contacts
-# The JDBC Driver file. This really isn't needed.
-jdbc.driver = org.h2.Driver
-# For a client-server database you need a user and password.
-# This isn't needed for H2, but included as example.
-jdbc.user =
-jdbc.password =
-```
+To get a property value in Java code, we write:
 
 In Java code we can get properties like this:
 ```java
@@ -218,6 +207,20 @@ PropertyManager also has a `getProperties()` method that returns all the propert
 ```java
 java.util.Properties properties = PropertyManager.getProperties();
 properties.list( System.out );
+```
+
+The property names can be anything you like, including "." in the name. 
+The standard standard names for JDBC properties are:
+
+```
+# The URL for your database
+jdbc.url = jdbc:h2:/home/jim/h2/contacts
+# The JDBC Driver file. This really isn't needed.
+jdbc.driver = org.h2.Driver
+# For a client-server database you need a user and password.
+# This isn't needed for H2, but included as example.
+jdbc.user =
+jdbc.password =
 ```
 
 ## References
