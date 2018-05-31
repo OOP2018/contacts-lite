@@ -14,16 +14,18 @@ ORM performs these operations:
 * **delete** stored objects from a database
 * manage object identities, so that each object has a unique identity and you don't create two copies of the same object
 
-ORM eliminates a lot of boring, repetitive programming needed to directly save objects as fields in a database, or create objects from a database. ORM does this for you.
+ORM eliminates a lot of boring, repetitive programming needed to directly save objects as fields in a database, or create objects from data in a database. ORM does this for you.
 
 You need 4 things to use ORM:
 
 1. JAR files for the ORM framework
-2. A database driver.   For a client-server database like MySQL you also need a database server. For an embedded database like [H2][H2] or SqlLite, no server is needed.
-3. Add annotations to your code to tell the framework which classes to save in the database, and the table names.
+2. A database driver. For an embedded database like [H2][H2] or SqlLite, the driver is all you need.  For a client-server database like MySQL you also need a database server. 
+3. Add annotations to your source code to tell the framework which classes to save in the database, and the table names.
 4. Create a "Data Access Object" (DAO) that performs the ORM operations.  The ORM framework makes this easy.
 
 ## How to Build and Run
+
+This repo contains an example of performing ORM using ORMLite.  To use it:
 
 1. Clone this repository.
 2. Create a directory for the database files, for example /temp/h2/.
@@ -38,13 +40,17 @@ createtables = true
 ```
 4. Build the source code.  To build using an IDE, add the JAR files in the "lib" directory to the project buildpath.  To build from the command line do:
 ```shell
-# This example uses a Bash shell.  You can use the git-bash shell
-cmd>  cd contacts-lite
+# This example uses the Bash shell.  You can use the git-bash shell
+cmd>  cd contacts-orm
 cmd>  mkdir bin
 cmd>  cd src
 cmd>  javac -cp '../lib/*' -d ../bin *.java util/*.java
 ```
-5. Run the main class `ContactsApp`.
+5. Run the main class `ContactsApp` in the `bin` directory. You still need the JARS on the classpath to run it:
+```shell
+cmd> cd contacts-orm
+cmd> java -cp 'lib/*:bin:." ContactsApp
+```
 
 
 ## Libraries Used
@@ -161,7 +167,9 @@ for(Contact c: results) System.out.println( c.getName() );
 
 ## How To Limit Log Messages?
 
-ORMLite has a built-in Logging facility named LocalLog.  It generates a lot of output messages.  To set the minimum severity of log messages, see:
+ORMLite has a built-in Logging facility named LocalLog.  It generates a lot of output messages.  To reduce the log messages, specify the minimum "severity" of messages you want displayed.
+
+To set the minimum severity of log messages, see:
 [http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html](http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/logger/LocalLog.html)
 
 In the example code there is a static block to specify that we only want to see messages of severity "error" or higher.
